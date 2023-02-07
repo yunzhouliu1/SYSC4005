@@ -1,10 +1,11 @@
+import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
 import pojo.Component;
 import pojo.Event;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main {
+public class main {
 
     private static double clock;
     private static final double Inspector_s_time = 5;
@@ -13,8 +14,11 @@ public class Main {
     private static List<Event> futureEvent;
 
     // baffer bofore workstation max = 2
-    private static List<Component> buff_c1w1, buff_c1w2,buff_c1w3, buff_c2w2, buff_c3w3 ;
-
+    private static List<Component> buff_c1w1 = new ArrayList<>();
+    private static List<Component> buff_c1w2 = new ArrayList<>();
+    private static List<Component> buff_c1w3 = new ArrayList<>();
+    private static List<Component> buff_c2w2 = new ArrayList<>();
+    private static List<Component> buff_c3w3 = new ArrayList<>();
     // workstation is work or not
     private static boolean w1, w2, w3;
 
@@ -28,12 +32,15 @@ public class Main {
         initialization();
 
         //Main while loop
-        while ((clock <= 30)){
+        while ((clock <= 50)){
             Event imminentEvent = futureEvent.get(0);
             futureEvent.remove(0);
             clock = imminentEvent.getEventTime();
             ProcessSimEvent(imminentEvent);
         }
+        System.out.println(p1);
+        System.out.println(p2);
+        System.out.println(p3);
 
     }
 
@@ -91,7 +98,7 @@ public class Main {
     private static void ProcessLEI1(Event imminentEvent){
         Component component = imminentEvent.getComponent();
 
-        if(buff_c1w1.size() == 2 && buff_c1w2.size() == 2 && buff_c1w1.size() ==2) {
+        if(buff_c1w1.size() == 2 && buff_c1w2.size() == 2 && buff_c1w3.size() ==2) {
             Inspector1 = true;
         }else {
             Inspector1 = false;
@@ -128,7 +135,7 @@ public class Main {
     private static void ProcessLEI2(Event imminentEvent) {
         Component component = imminentEvent.getComponent();
         String type = component.getType();
-        if (type == "c2") {
+        if (type.equals("c2")) {
             if (buff_c2w2.size() == 2) {
                 Inspector2 = true;
             } else {
@@ -143,7 +150,7 @@ public class Main {
                 futureEvent.add(e1);
                 }
             }
-        }else if (type == "c3"){
+        }else if (type.equals("c3")){
             if (buff_c3w3.size() == 2) {
                 Inspector2 = true;
             } else {
@@ -222,13 +229,23 @@ public class Main {
         p1 = 0;
         p2 = 0;
         p3 = 0;
-
         Component c1 = new Component("c1",false);
-        Event evt = new Event("AR1",clock,c1);
+        Component c2 = new Component("c2",false);
+        Component c3 = new Component("c3",false);
+
+        buff_c1w1.add(c1);
+        buff_c1w2.add(c1);
+        buff_c1w3.add(c1);
+        buff_c3w3.add(c3);
+        buff_c2w2.add(c2);
+
+
+        Component c11 = new Component("c1",false);
+        Event evt = new Event("AR1",clock,c11);
         futureEvent.add(evt);
 
-        Component c2 = new Component("c2",false);
-        Event evt1 = new Event("AR2",clock,c2);
+        Component c22 = new Component("c2",false);
+        Event evt1 = new Event("AR2",clock,c22);
         futureEvent.add(evt1);
     }
 
@@ -249,4 +266,131 @@ public class Main {
         }
     }
 
+    public static double getClock() {
+        return clock;
+    }
+
+    public static void setClock(double clock) {
+        main.clock = clock;
+    }
+
+    public static double getInspector_s_time() {
+        return Inspector_s_time;
+    }
+
+    public static double getWorkstation_s_time() {
+        return Workstation_s_time;
+    }
+
+    public static List<Event> getFutureEvent() {
+        return futureEvent;
+    }
+
+    public static void setFutureEvent(List<Event> futureEvent) {
+        main.futureEvent = futureEvent;
+    }
+
+    public static List<Component> getBuff_c1w1() {
+        return buff_c1w1;
+    }
+
+    public static void setBuff_c1w1(List<Component> buff_c1w1) {
+        main.buff_c1w1 = buff_c1w1;
+    }
+
+    public static List<Component> getBuff_c1w2() {
+        return buff_c1w2;
+    }
+
+    public static void setBuff_c1w2(List<Component> buff_c1w2) {
+        main.buff_c1w2 = buff_c1w2;
+    }
+
+    public static List<Component> getBuff_c1w3() {
+        return buff_c1w3;
+    }
+
+    public static void setBuff_c1w3(List<Component> buff_c1w3) {
+        main.buff_c1w3 = buff_c1w3;
+    }
+
+    public static List<Component> getBuff_c2w2() {
+        return buff_c2w2;
+    }
+
+    public static void setBuff_c2w2(List<Component> buff_c2w2) {
+        main.buff_c2w2 = buff_c2w2;
+    }
+
+    public static List<Component> getBuff_c3w3() {
+        return buff_c3w3;
+    }
+
+    public static void setBuff_c3w3(List<Component> buff_c3w3) {
+        main.buff_c3w3 = buff_c3w3;
+    }
+
+    public static boolean isW1() {
+        return w1;
+    }
+
+    public static void setW1(boolean w1) {
+        main.w1 = w1;
+    }
+
+    public static boolean isW2() {
+        return w2;
+    }
+
+    public static void setW2(boolean w2) {
+        main.w2 = w2;
+    }
+
+    public static boolean isW3() {
+        return w3;
+    }
+
+    public static void setW3(boolean w3) {
+        main.w3 = w3;
+    }
+
+    public static boolean isInspector1() {
+        return Inspector1;
+    }
+
+    public static void setInspector1(boolean inspector1) {
+        Inspector1 = inspector1;
+    }
+
+    public static boolean isInspector2() {
+        return Inspector2;
+    }
+
+    public static void setInspector2(boolean inspector2) {
+        Inspector2 = inspector2;
+    }
+
+    public static int getP1() {
+        return p1;
+    }
+
+    public static void setP1(int p1) {
+        main.p1 = p1;
+    }
+
+    public static int getP2() {
+        return p2;
+    }
+
+    public static void setP2(int p2) {
+        main.p2 = p2;
+    }
+
+    public static int getP3() {
+        return p3;
+    }
+
+    public static void setP3(int p3) {
+        main.p3 = p3;
+    }
 }
