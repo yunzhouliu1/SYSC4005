@@ -3,6 +3,7 @@ import pojo.Component;
 import pojo.Event;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class main {
@@ -33,6 +34,9 @@ public class main {
 
         //Main while loop
         while ((clock <= 50)){
+
+            futureEvent.sort(Comparator.comparing(Event::getEventTime));
+
             Event imminentEvent = futureEvent.get(0);
             futureEvent.remove(0);
             clock = imminentEvent.getEventTime();
@@ -95,11 +99,14 @@ public class main {
         futureEvent.add(e);
     }
 
+    // generate AR1
     private static void ProcessLEI1(Event imminentEvent){
         Component component = imminentEvent.getComponent();
 
         if(buff_c1w1.size() == 2 && buff_c1w2.size() == 2 && buff_c1w3.size() ==2) {
             Inspector1 = true;
+            Event e = new Event("LEI1",clock+3,component); // all buffer is full , delay the event
+
         }else {
             Inspector1 = false;
 
@@ -116,12 +123,14 @@ public class main {
                     if (buff_c1w2.size() < 2){
                         buff_c1w2.add(component);
                         Event e = new Event("ARW2",clock,component);
+                        futureEvent.add(e);
                     }
                     break;
                 case 3:
                     if (buff_c1w3.size() < 2){
                         buff_c1w3.add(component);
                         Event e = new Event("ARW3",clock,component);
+                        futureEvent.add(e);
                     }
                     break;
             }
@@ -138,17 +147,18 @@ public class main {
         if (type.equals("c2")) {
             if (buff_c2w2.size() == 2) {
                 Inspector2 = true;
+                // 重设LEI2
             } else {
             Inspector2 = false;
-            if (buff_c2w2.size() < 2) {
-                buff_c2w2.add(component);
-                Event e = new Event("ARW2", clock, component);
-                futureEvent.add(e);
 
-                Component component1 = new Component("c2", false);
-                Event e1 = new Event("AR2", clock, component1);
-                futureEvent.add(e1);
-                }
+            buff_c2w2.add(component);
+            Event e = new Event("ARW2", clock, component);
+            futureEvent.add(e);
+
+            Component component1 = new Component("c2", false);
+            Event e1 = new Event("AR2", clock, component1);
+            futureEvent.add(e1);
+
             }
         }else if (type.equals("c3")){
             if (buff_c3w3.size() == 2) {
@@ -190,8 +200,7 @@ public class main {
     private static void ProcessLEW1(Event imminentEvent) {
         Component remove = buff_c1w1.remove(0);
         p1++;
-        Event e = new Event("AR1", clock,remove);
-        futureEvent.add(e);
+
     }
 
     private static void ProcessLEW2(Event imminentEvent) {
@@ -199,10 +208,6 @@ public class main {
         Component remove1 = buff_c1w2.remove(0);
         p2++;
 
-        Event e = new Event("AR2", clock,remove);
-        futureEvent.add(e);
-        Event e1 = new Event("AR1", clock,remove1);
-        futureEvent.add(e1);
     }
 
     private static void ProcessLEW3(Event imminentEvent) {
@@ -210,10 +215,6 @@ public class main {
         Component remove1 = buff_c3w3.remove(0);
         p3++;
 
-        Event e = new Event("AR1", clock,remove);
-        futureEvent.add(e);
-        Event e1 = new Event("AR2", clock,remove1);
-        futureEvent.add(e1);
     }
 
 
@@ -229,15 +230,15 @@ public class main {
         p1 = 0;
         p2 = 0;
         p3 = 0;
-        Component c1 = new Component("c1",false);
-        Component c2 = new Component("c2",false);
-        Component c3 = new Component("c3",false);
-
-        buff_c1w1.add(c1);
-        buff_c1w2.add(c1);
-        buff_c1w3.add(c1);
-        buff_c3w3.add(c3);
-        buff_c2w2.add(c2);
+//        Component c1 = new Component("c1",false);
+//        Component c2 = new Component("c2",false);
+//        Component c3 = new Component("c3",false);
+//
+//        buff_c1w1.add(c1);
+//        buff_c1w2.add(c1);
+//        buff_c1w3.add(c1);
+//        buff_c3w3.add(c3);
+//        buff_c2w2.add(c2);
 
 
         Component c11 = new Component("c1",false);
@@ -255,15 +256,15 @@ public class main {
         int buff_c1w2_size = buff_c1w2.size();
         int buff_c1w3_size = buff_c1w3.size();
 
-        if (buff_c1w1_size == buff_c1w2_size && buff_c1w1_size == buff_c1w3_size) {
+        if (buff_c1w1_size == buff_c1w2_size && buff_c1w1_size == buff_c1w3_size && buff_c1w1_size < 2) {
             return 1;
-        }else if (buff_c1w2_size < buff_c1w1_size && buff_c1w2_size < buff_c1w3_size){
+        }else if (buff_c1w2_size < buff_c1w1_size && buff_c1w2_size < buff_c1w3_size && buff_c1w2_size < 2){
             return 2;
-        }else if (buff_c1w3_size < buff_c1w1_size && buff_c1w3_size < buff_c1w2_size) {
+        }else if (buff_c1w3_size < buff_c1w1_size && buff_c1w3_size < buff_c1w2_size && buff_c1w3_size <2) {
             return 3;
-        }else {
-            return 1;
         }
+
+        return 4; // there are no buffer for comp 1, stop insp 1
     }
 
     public static double getClock() {
