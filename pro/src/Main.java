@@ -86,6 +86,9 @@ public class main {
     }
 
     private static void ProcessAR1(Event imminentEvent) {
+        Double eventTime = imminentEvent.getEventTime();
+        clock = eventTime;
+
         Component component = imminentEvent.getComponent();
         component.setCheck(true);
         Event e = new Event("LEI1",clock+Inspector_s_time,component);
@@ -93,6 +96,9 @@ public class main {
     }
 
     private static void ProcessAR2(Event imminentEvent) {
+        Double eventTime = imminentEvent.getEventTime();
+        clock = eventTime;
+
         Component component = imminentEvent.getComponent();
         component.setCheck(true);
         Event e = new Event("LEI2",clock+Inspector_s_time,component);
@@ -102,10 +108,13 @@ public class main {
     // generate AR1
     private static void ProcessLEI1(Event imminentEvent){
         Component component = imminentEvent.getComponent();
+        Double eventTime = imminentEvent.getEventTime();
+        clock = eventTime;
 
         if(buff_c1w1.size() == 2 && buff_c1w2.size() == 2 && buff_c1w3.size() ==2) {
             Inspector1 = true;
             Event e = new Event("LEI1",clock+3,component); // all buffer is full , delay the event
+            futureEvent.add(e);
 
         }else {
             Inspector1 = false;
@@ -117,6 +126,10 @@ public class main {
                         buff_c1w1.add(component);
                         Event e = new Event("ARW1",clock,component);
                         futureEvent.add(e);
+
+                        Component component1 = new Component("c1",false);
+                        Event e1= new Event("AR1",clock,component1);
+                        futureEvent.add(e1);
                     }
                     break;
                 case 2:
@@ -124,6 +137,10 @@ public class main {
                         buff_c1w2.add(component);
                         Event e = new Event("ARW2",clock,component);
                         futureEvent.add(e);
+
+                        Component component1 = new Component("c1",false);
+                        Event e1= new Event("AR1",clock,component1);
+                        futureEvent.add(e1);
                     }
                     break;
                 case 3:
@@ -131,23 +148,32 @@ public class main {
                         buff_c1w3.add(component);
                         Event e = new Event("ARW3",clock,component);
                         futureEvent.add(e);
+
+                        Component component1 = new Component("c1",false);
+                        Event e1= new Event("AR1",clock,component1);
+                        futureEvent.add(e1);
                     }
                     break;
             }
-            Component component1 = new Component("c1",false);
-            Event e= new Event("AR1",clock,component1);
-            futureEvent.add(e);
+
         }
 
     }
 
     private static void ProcessLEI2(Event imminentEvent) {
         Component component = imminentEvent.getComponent();
+
+        Double eventTime = imminentEvent.getEventTime();
+        clock = eventTime;
+
+
         String type = component.getType();
         if (type.equals("c2")) {
             if (buff_c2w2.size() == 2) {
                 Inspector2 = true;
                 // 重设LEI2
+                Event e = new Event("LEI2",clock+3,component); //  buffer c2 is full , delay the event
+                futureEvent.add(e);
             } else {
             Inspector2 = false;
 
@@ -155,6 +181,7 @@ public class main {
             Event e = new Event("ARW2", clock, component);
             futureEvent.add(e);
 
+            //c3 or c2 random
             Component component1 = new Component("c2", false);
             Event e1 = new Event("AR2", clock, component1);
             futureEvent.add(e1);
@@ -163,13 +190,16 @@ public class main {
         }else if (type.equals("c3")){
             if (buff_c3w3.size() == 2) {
                 Inspector2 = true;
+                // 重设LEI2
+                Event e = new Event("LEI2",clock+3,component); //  buffer c2 is full , delay the event
+                futureEvent.add(e);
             } else {
                 Inspector2 = false;
                 if (buff_c3w3.size() < 2) {
                     buff_c3w3.add(component);
                     Event e = new Event("ARW3", clock, component);
                     futureEvent.add(e);
-
+                    //c3 or c2 random
                     Component component1 = new Component("c3", false);
                     Event e1 = new Event("AR2", clock, component1);
                     futureEvent.add(e1);
@@ -179,18 +209,29 @@ public class main {
      }
 
     private static void ProcessARW1(Event imminentEvent) {
+
+        Double eventTime = imminentEvent.getEventTime();
+        clock = eventTime;
+
+
         Component c = imminentEvent.getComponent();
         Event e = new Event("LEW1", clock+Workstation_s_time,c);
         futureEvent.add(e);
     }
 
     private static void ProcessARW2(Event imminentEvent) {
+        Double eventTime = imminentEvent.getEventTime();
+        clock = eventTime;
+
         Component c = imminentEvent.getComponent();
         Event e = new Event("LEW2", clock+Workstation_s_time,c);
         futureEvent.add(e);
     }
 
     private static void ProcessARW3(Event imminentEvent) {
+        Double eventTime = imminentEvent.getEventTime();
+        clock = eventTime;
+
         Component c = imminentEvent.getComponent();
         Event e = new Event("LEW3", clock+Workstation_s_time,c);
         futureEvent.add(e);
@@ -198,12 +239,18 @@ public class main {
 
 
     private static void ProcessLEW1(Event imminentEvent) {
+        Double eventTime = imminentEvent.getEventTime();
+        clock = eventTime;
+
         Component remove = buff_c1w1.remove(0);
         p1++;
 
     }
 
     private static void ProcessLEW2(Event imminentEvent) {
+        Double eventTime = imminentEvent.getEventTime();
+        clock = eventTime;
+
         Component remove = buff_c2w2.remove(0);
         Component remove1 = buff_c1w2.remove(0);
         p2++;
@@ -211,6 +258,9 @@ public class main {
     }
 
     private static void ProcessLEW3(Event imminentEvent) {
+        Double eventTime = imminentEvent.getEventTime();
+        clock = eventTime;
+
         Component remove = buff_c1w3.remove(0);
         Component remove1 = buff_c3w3.remove(0);
         p3++;

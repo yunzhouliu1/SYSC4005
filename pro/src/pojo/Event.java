@@ -6,6 +6,7 @@ public class Event {
     // AR2: Component enters Inspector 2
     // LEI1: The Component leaves Inspector 1
     // LEI2: The Component leaves Inspector 2
+    // 210 main
     // ARW1: Component into workstation1 buffer
     // ARW2: Component into workstation2 buffer
     // ARW3: Component into workstation3 buffer
