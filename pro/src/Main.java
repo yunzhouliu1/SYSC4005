@@ -1,8 +1,10 @@
 import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
+import org.w3c.dom.ls.LSOutput;
 import pojo.Component;
 import pojo.Event;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -13,6 +15,7 @@ public class main {
     private static final double Workstation_s_time = 6;
 
     private static List<Event> futureEvent;
+
 
     // baffer bofore workstation max = 2
     private static List<Component> buff_c1w1 = new ArrayList<>();
@@ -29,19 +32,45 @@ public class main {
     // the number of product
     private static int p1, p2, p3;
 
+    private static List ran = new ArrayList();
+
     public static void main(String[] args) {
         initialization();
 
+        double x = 1;
+        double a = 1103515245;
+        double c = 12345;
+        //m = 2^31
+        double m = (double) Math.pow(2, 31);
+
+        InputGeneratorV2 rng = new InputGeneratorV2(x, a, c, m);
+
+        double[] randomNumbers = rng.generateRandomNumbers();
+
+        for (double randomNumber : randomNumbers) {
+            ran.add(randomNumber);
+        }
+        System.out.println(ran);
         //Main while loop
-        while ((clock <= 50)){
+        while ((clock <= 100)){
 
             futureEvent.sort(Comparator.comparing(Event::getEventTime));
 
             Event imminentEvent = futureEvent.get(0);
-            futureEvent.remove(0);
+            Event remove = futureEvent.remove(0);
             clock = imminentEvent.getEventTime();
             ProcessSimEvent(imminentEvent);
+
+//            System.out.println(futureEvent.size());
+//            System.out.println("---------------------");
+//            System.out.println("buff_c1w1: " + buff_c1w1.size());
+//            System.out.println("buff_c1w2: " + buff_c1w2.size());
+//            System.out.println("buff_c1w3: " + buff_c1w3.size());
+//            System.out.println("buff_c2w2: " + buff_c2w2.size());
+//            System.out.println("buff_c3w3: " + buff_c3w3.size());
+
         }
+//        System.out.println("prodect");
         System.out.println(p1);
         System.out.println(p2);
         System.out.println(p3);
@@ -89,9 +118,14 @@ public class main {
         Double eventTime = imminentEvent.getEventTime();
         clock = eventTime;
 
+        double remove = (double) ran.remove(0);
+        double serviceTime = (-1/0.09654)*Math.log(1-remove);
+//        System.out.println("serviceTime"+serviceTime);
+
         Component component = imminentEvent.getComponent();
         component.setCheck(true);
-        Event e = new Event("LEI1",clock+Inspector_s_time,component);
+
+        Event e = new Event("LEI1",clock+serviceTime,component);
         futureEvent.add(e);
     }
 
@@ -99,10 +133,25 @@ public class main {
         Double eventTime = imminentEvent.getEventTime();
         clock = eventTime;
 
+        double remove = (double) ran.remove(0);
+
         Component component = imminentEvent.getComponent();
         component.setCheck(true);
-        Event e = new Event("LEI2",clock+Inspector_s_time,component);
-        futureEvent.add(e);
+//        System.out.println(component);
+
+        if (component.getType().equals("c2")){
+            double serviceTime = (-1/0.0644)*Math.log(1-remove);
+//            System.out.println(serviceTime);
+            Event e = new Event("LEI2",clock+serviceTime,component);
+            futureEvent.add(e);
+        }else {
+            double serviceTime = (-1/0.0485)*Math.log(1-remove);
+//            System.out.println(serviceTime);
+            Event e = new Event("LEI2",clock+serviceTime,component);
+            futureEvent.add(e);
+        }
+
+
     }
 
     // generate AR1
@@ -120,6 +169,7 @@ public class main {
             Inspector1 = false;
 
             int smallestBuffer = getSmallestBuffer();
+//            System.out.println("the smallest buffer is : " + smallestBuffer);
             switch (smallestBuffer){
                 case 1:
                     if (buff_c1w1.size() < 2){
@@ -169,25 +219,26 @@ public class main {
 
         String type = component.getType();
         if (type.equals("c2")) {
+//            System.out.println("c2");
             if (buff_c2w2.size() == 2) {
                 Inspector2 = true;
                 // 重设LEI2
                 Event e = new Event("LEI2",clock+3,component); //  buffer c2 is full , delay the event
                 futureEvent.add(e);
             } else {
-            Inspector2 = false;
+                Inspector2 = false;
 
-            buff_c2w2.add(component);
-            Event e = new Event("ARW2", clock, component);
-            futureEvent.add(e);
+                buff_c2w2.add(component);
+                Event e = new Event("ARW2", clock, component);
+                futureEvent.add(e);
 
-            //c3 or c2 random
-            Component component1 = new Component("c2", false);
-            Event e1 = new Event("AR2", clock, component1);
-            futureEvent.add(e1);
+                Component component1 = new Component("c3", false);
+                Event e1 = new Event("AR2", clock, component1);
+                futureEvent.add(e1);
 
             }
         }else if (type.equals("c3")){
+//            System.out.println("c3");
             if (buff_c3w3.size() == 2) {
                 Inspector2 = true;
                 // 重设LEI2
@@ -199,8 +250,9 @@ public class main {
                     buff_c3w3.add(component);
                     Event e = new Event("ARW3", clock, component);
                     futureEvent.add(e);
+
                     //c3 or c2 random
-                    Component component1 = new Component("c3", false);
+                    Component component1 = new Component("c2", false);
                     Event e1 = new Event("AR2", clock, component1);
                     futureEvent.add(e1);
                 }
@@ -241,9 +293,15 @@ public class main {
     private static void ProcessLEW1(Event imminentEvent) {
         Double eventTime = imminentEvent.getEventTime();
         clock = eventTime;
+        if (buff_c1w1.size() > 0){
+            Component remove = buff_c1w1.remove(0);
+            p1++;
+        }else{
+            Component c = imminentEvent.getComponent();
+            Event e = new Event("LEW1", clock+5,c);
+            futureEvent.add(e);
+        }
 
-        Component remove = buff_c1w1.remove(0);
-        p1++;
 
     }
 
@@ -251,9 +309,17 @@ public class main {
         Double eventTime = imminentEvent.getEventTime();
         clock = eventTime;
 
-        Component remove = buff_c2w2.remove(0);
-        Component remove1 = buff_c1w2.remove(0);
-        p2++;
+        if (buff_c2w2.size() > 0 && buff_c1w2.size() > 0){
+            Component remove = buff_c2w2.remove(0);
+            Component remove1 = buff_c1w2.remove(0);
+            p2++;
+        }else{
+            Component c = imminentEvent.getComponent();
+            Event e = new Event("LEW2", clock+5,c);
+            futureEvent.add(e);
+        }
+
+
 
     }
 
@@ -261,9 +327,16 @@ public class main {
         Double eventTime = imminentEvent.getEventTime();
         clock = eventTime;
 
-        Component remove = buff_c1w3.remove(0);
-        Component remove1 = buff_c3w3.remove(0);
-        p3++;
+        if (buff_c1w3.size() > 0 && buff_c3w3.size() > 0){
+            Component remove = buff_c1w3.remove(0);
+            Component remove1 = buff_c3w3.remove(0);
+            p3++;
+        }else{
+            Component c = imminentEvent.getComponent();
+            Event e = new Event("LEW3", clock+5,c);
+            futureEvent.add(e);
+        }
+
 
     }
 
@@ -290,6 +363,15 @@ public class main {
 //        buff_c3w3.add(c3);
 //        buff_c2w2.add(c2);
 
+        double x = 1;
+        double a = 1103515245;
+        double c = 12345;
+        //m = 2^31
+        double m = (double) Math.pow(2, 31);
+
+        InputGeneratorV2 rng = new InputGeneratorV2(x, a, c, m);
+        double[] doubles = rng.generateRandomNumbers();
+
 
         Component c11 = new Component("c1",false);
         Event evt = new Event("AR1",clock,c11);
@@ -308,13 +390,20 @@ public class main {
 
         if (buff_c1w1_size == buff_c1w2_size && buff_c1w1_size == buff_c1w3_size && buff_c1w1_size < 2) {
             return 1;
-        }else if (buff_c1w2_size < buff_c1w1_size && buff_c1w2_size < buff_c1w3_size && buff_c1w2_size < 2){
+        }else if (buff_c1w2_size < buff_c1w3_size && buff_c1w2_size == buff_c1w1_size && buff_c1w1_size < 2){
+            return 1;
+        }else if (buff_c1w2_size == buff_c1w3_size && buff_c1w2_size < 2) {
+            return 2;
+        }else if (buff_c1w2_size < buff_c1w3_size && buff_c1w2_size < buff_c1w1_size && buff_c1w2_size < 2){
             return 2;
         }else if (buff_c1w3_size < buff_c1w1_size && buff_c1w3_size < buff_c1w2_size && buff_c1w3_size <2) {
             return 3;
+        }else if(buff_c1w3_size == buff_c1w1_size && buff_c1w1_size < 2){
+            return 1;
         }
 
         return 4; // there are no buffer for comp 1, stop insp 1
+
     }
 
     public static double getClock() {

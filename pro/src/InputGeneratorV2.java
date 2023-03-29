@@ -24,6 +24,12 @@ public class InputGeneratorV2 {
         return randomNumbers;
     }
 
+    public double generateRND() {
+        x = (a * x + c) % m;
+        double out = (double) x / m;
+        return out;
+    }
+
     public static void main(String[] args) {
         //assign values to a, c, m, x0
         //x0 = 1
