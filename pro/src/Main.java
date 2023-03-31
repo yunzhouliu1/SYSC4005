@@ -32,11 +32,42 @@ public class main {
     // the number of product
     private static int p1, p2, p3;
 
+    private static double arrivalc1w1, arrivalc1w2, arrivalc1w3, arrivalc2w2, arrivalc3w3;
+    private static double allNumberComp;
+
     private static List ran = new ArrayList();
+
+    private static double inspector1_blocked_time_s;
+    private static double inspector1_blocked_time_e;
+    private static double inspector1_blocked_time;
+
+    private static double inspector2_blocked_time_s;
+    private static double inspector2_blocked_time_e;
+    private static double inspector2_blocked_time;
+
+    private static double workstation1_idle_time;
+    private static double workstation1_idle_time_s;
+    private static double workstation1_idle_time_e;
+
+    private static double workstation2_idle_time;
+    private static double workstation2_idle_time_s;
+    private static double workstation2_idle_time_e;
+
+    private static double workstation3_idle_time;
+    private static double workstation3_idle_time_s;
+    private static double workstation3_idle_time_e;
+
+    private static List<Double> c1w1 = new ArrayList<>();
+    private static List<Double> c1w2 = new ArrayList<>();
+    private static List<Double> c1w3 = new ArrayList<>();
+    private static List<Double> c2w2 = new ArrayList<>();
+    private static List<Double> c3w3 = new ArrayList<>();
+
+    private static double totalDelay;
 
     public static void main(String[] args) {
         initialization();
-
+        double allstep = 0;
         double x = 1;
         double a = 1103515245;
         double c = 12345;
@@ -50,9 +81,14 @@ public class main {
         for (double randomNumber : randomNumbers) {
             ran.add(randomNumber);
         }
-        System.out.println(ran);
+//        System.out.println(ran);
         //Main while loop
-        while ((clock <= 100)){
+        while ((clock <= 60*10)){
+//            System.out.println("random: "+ ran.size());
+//            System.out.println("Inspector1: "+ Inspector1);
+//            System.out.println("Inspector2: "+ Inspector2);
+
+
 
             futureEvent.sort(Comparator.comparing(Event::getEventTime));
 
@@ -60,6 +96,97 @@ public class main {
             Event remove = futureEvent.remove(0);
             clock = imminentEvent.getEventTime();
             ProcessSimEvent(imminentEvent);
+
+            if (Inspector1 && inspector1_blocked_time_s == 0){
+                inspector1_blocked_time_s = imminentEvent.getEventTime();
+//                System.out.println("inspector1_blocked_time_s" + inspector1_blocked_time_s);
+
+            }
+            if (!Inspector1){
+                inspector1_blocked_time_e = imminentEvent.getEventTime();
+//                System.out.println("inspector1_blocked_time_e" + inspector1_blocked_time_e);
+                if (inspector1_blocked_time_s > 0) {
+                    inspector1_blocked_time = inspector1_blocked_time_e - inspector1_blocked_time_s;
+                    inspector1_blocked_time_s = 0;
+                }
+            }
+
+            if (Inspector2 && inspector2_blocked_time_s == 0){
+                inspector2_blocked_time_s = imminentEvent.getEventTime();
+//                System.out.println("inspector2_blocked_time_s" + inspector2_blocked_time_s);
+
+            }
+            if (!Inspector2){
+                inspector2_blocked_time_e = imminentEvent.getEventTime();
+//                System.out.println("inspector2_blocked_time_e" + inspector2_blocked_time_e);
+                if (inspector2_blocked_time_s > 0) {
+                    inspector2_blocked_time = inspector2_blocked_time_e - inspector2_blocked_time_s;
+                    inspector2_blocked_time_s = 0;
+                }
+            }
+
+            if (w1 && workstation1_idle_time_s == 0){
+                workstation1_idle_time_s = imminentEvent.getEventTime();
+//                System.out.println("inspector2_blocked_time_s" + inspector2_blocked_time_s);
+
+            }
+            if (!w1){
+                workstation1_idle_time_e = imminentEvent.getEventTime();
+//                System.out.println("inspector2_blocked_time_e" + inspector2_blocked_time_e);
+                if (workstation1_idle_time_s > 0) {
+                    workstation1_idle_time = workstation1_idle_time_e - workstation1_idle_time_s;
+                    workstation1_idle_time_s = 0;
+                }
+            }
+
+            if (w2 && workstation2_idle_time_s == 0){
+                workstation2_idle_time_s = imminentEvent.getEventTime();
+//                System.out.println("inspector2_blocked_time_s" + inspector2_blocked_time_s);
+
+            }
+            if (!w2){
+                workstation2_idle_time_e = imminentEvent.getEventTime();
+//                System.out.println("inspector2_blocked_time_e" + inspector2_blocked_time_e);
+                if (workstation2_idle_time_s > 0) {
+                    workstation2_idle_time = workstation2_idle_time_e - workstation2_idle_time_s;
+                    workstation2_idle_time_s = 0;
+                }
+            }
+
+            if (w3 && workstation3_idle_time_s == 0){
+                workstation3_idle_time_s = imminentEvent.getEventTime();
+//                System.out.println("inspector2_blocked_time_s" + inspector2_blocked_time_s);
+
+            }
+            if (!w3){
+                workstation3_idle_time_e = imminentEvent.getEventTime();
+//                System.out.println("inspector2_blocked_time_e" + inspector2_blocked_time_e);
+                if (workstation3_idle_time_s > 0) {
+                    workstation3_idle_time = workstation3_idle_time_e - workstation3_idle_time_s;
+                    workstation3_idle_time_s = 0;
+                }
+            }
+
+            double size_c1w1 = buff_c1w1.size();
+            double l1 = size_c1w1/2;
+            c1w1.add(l1);
+
+            double size_c1w2 = buff_c1w2.size();
+            double l2 = size_c1w2/2;
+            c1w2.add(l2);
+
+            double size_c1w3 = buff_c1w3.size();
+            double l3 = size_c1w3/2;
+            c1w3.add(l3);
+
+            double size_c2w2 = buff_c2w2.size();
+            double l4 = size_c2w2/2;
+            c2w2.add(l4);
+
+            double size_c3w3 = buff_c3w3.size();
+            double l5 = size_c3w3/2;
+            c3w3.add(l5);
+
 
 //            System.out.println(futureEvent.size());
 //            System.out.println("---------------------");
@@ -70,14 +197,79 @@ public class main {
 //            System.out.println("buff_c3w3: " + buff_c3w3.size());
 
         }
+        System.out.println("Total number of arrived components: " + allNumberComp);
+        System.out.println("mean arrival rate (Component arrival rate per second): " + (allNumberComp/600));
+        System.out.println("Mean number of components in system is: "+ totalDelay/600);
+        System.out.println("Total delay time in second: "+ totalDelay);
+        System.out.println("Average latency per component in second: "+ totalDelay/allNumberComp);
+
+        double sum1 = 0;
+        for (Double aDouble : c1w1) {
+            sum1 = sum1 + aDouble;
+        }
+        double size1 = c1w1.size();
+        double c1 = sum1/size1;
+        System.out.println("average buffer occupancy for c1w1 is: " + c1);
+
+        double sum2 = 0;
+        for (Double aDouble : c1w2) {
+            sum2 = sum2 + aDouble;
+        }
+        double size2 = c1w2.size();
+        double c2 = sum2/size2;
+        System.out.println("average buffer occupancy for c1w2 is: " + c2);
+
+        double sum3 = 0;
+        for (Double aDouble : c1w3) {
+            sum3 = sum3 + aDouble;
+        }
+        double size3 = c1w3.size();
+        double c3 = sum3/size3;
+        System.out.println("average buffer occupancy for c1w3 is: " + c3);
+
+        double sum4 = 0;
+        for (Double aDouble : c2w2) {
+            sum4 = sum4 + aDouble;
+        }
+        double size4 = c2w2.size();
+        double c4 = sum4/size4;
+        System.out.println("average buffer occupancy for c2w2 is: " + c4);
+
+        double sum5 = 0;
+        for (Double aDouble : c3w3) {
+            sum5 = sum5 + aDouble;
+        }
+        double size5 = c3w3.size();
+        double c5 = sum5/size5;
+        System.out.println("average buffer occupancy for c3w3 is: " + c5);
+
+
 //        System.out.println("prodect");
-        System.out.println(p1);
-        System.out.println(p2);
-        System.out.println(p3);
+        System.out.println("prodect p1: " + p1);
+        System.out.println("prodect p2: " + p2);
+        System.out.println("prodect p3: " + p3);
+        double a1 = p1;
+        double a2 = p2;
+        double a3 = p3;
+//        3x facility throughput
+        System.out.println("p1 throughput as products per second: "+  (a1/600));
+        System.out.println("p2 throughput as products per second: "+ (a2/600));
+        System.out.println("p3 throughput as products per second: "+ (a3/600));
+
+        System.out.println("inspector1 blocked time is: "+ inspector1_blocked_time + "second");
+        System.out.println("inspector2 blocked time is: "+ inspector2_blocked_time + "second");
+
+        System.out.println("workstation1 idle time: " + workstation1_idle_time + "second");
+        System.out.println("workstation2 idle time: " + workstation2_idle_time + "second");
+        System.out.println("workstation3 idle time: " + workstation3_idle_time + "second");
 
     }
 
     private static void ProcessSimEvent(Event imminentEvent){
+
+
+
+
         String eventType = imminentEvent.getEventType();
         switch (eventType){
             case "AR1":
@@ -115,12 +307,13 @@ public class main {
     }
 
     private static void ProcessAR1(Event imminentEvent) {
+        allNumberComp++;
         Double eventTime = imminentEvent.getEventTime();
         clock = eventTime;
 
         double remove = (double) ran.remove(0);
         double serviceTime = (-1/0.09654)*Math.log(1-remove);
-//        System.out.println("serviceTime"+serviceTime);
+//        System.out.println("ar1 serviceTime"+serviceTime);
 
         Component component = imminentEvent.getComponent();
         component.setCheck(true);
@@ -130,6 +323,7 @@ public class main {
     }
 
     private static void ProcessAR2(Event imminentEvent) {
+        allNumberComp++;
         Double eventTime = imminentEvent.getEventTime();
         clock = eventTime;
 
@@ -148,8 +342,11 @@ public class main {
             double serviceTime = (-1/0.0485)*Math.log(1-remove);
 //            System.out.println(serviceTime);
             Event e = new Event("LEI2",clock+serviceTime,component);
+
             futureEvent.add(e);
         }
+
+
 
 
     }
@@ -162,22 +359,23 @@ public class main {
 
         if(buff_c1w1.size() == 2 && buff_c1w2.size() == 2 && buff_c1w3.size() ==2) {
             Inspector1 = true;
-            Event e = new Event("LEI1",clock+3,component); // all buffer is full , delay the event
+            Event e = new Event("LEI1",clock+5,component); // all buffer is full , delay the event
             futureEvent.add(e);
 
         }else {
             Inspector1 = false;
-
             int smallestBuffer = getSmallestBuffer();
 //            System.out.println("the smallest buffer is : " + smallestBuffer);
+
             switch (smallestBuffer){
                 case 1:
                     if (buff_c1w1.size() < 2){
                         buff_c1w1.add(component);
+//                        arrivalc1w1++;
                         Event e = new Event("ARW1",clock,component);
                         futureEvent.add(e);
 
-                        Component component1 = new Component("c1",false);
+                        Component component1 = new Component("c1",false,clock);
                         Event e1= new Event("AR1",clock,component1);
                         futureEvent.add(e1);
                     }
@@ -185,10 +383,11 @@ public class main {
                 case 2:
                     if (buff_c1w2.size() < 2){
                         buff_c1w2.add(component);
+//                        arrivalc1w2++;
                         Event e = new Event("ARW2",clock,component);
                         futureEvent.add(e);
 
-                        Component component1 = new Component("c1",false);
+                        Component component1 = new Component("c1",false,clock);
                         Event e1= new Event("AR1",clock,component1);
                         futureEvent.add(e1);
                     }
@@ -196,10 +395,11 @@ public class main {
                 case 3:
                     if (buff_c1w3.size() < 2){
                         buff_c1w3.add(component);
+//                        arrivalc1w3++;
                         Event e = new Event("ARW3",clock,component);
                         futureEvent.add(e);
 
-                        Component component1 = new Component("c1",false);
+                        Component component1 = new Component("c1",false,clock);
                         Event e1= new Event("AR1",clock,component1);
                         futureEvent.add(e1);
                     }
@@ -207,6 +407,8 @@ public class main {
             }
 
         }
+
+
 
     }
 
@@ -229,10 +431,11 @@ public class main {
                 Inspector2 = false;
 
                 buff_c2w2.add(component);
+//                arrivalc2w2++;
                 Event e = new Event("ARW2", clock, component);
                 futureEvent.add(e);
 
-                Component component1 = new Component("c3", false);
+                Component component1 = new Component("c3",false,clock);
                 Event e1 = new Event("AR2", clock, component1);
                 futureEvent.add(e1);
 
@@ -248,11 +451,12 @@ public class main {
                 Inspector2 = false;
                 if (buff_c3w3.size() < 2) {
                     buff_c3w3.add(component);
+//                    arrivalc3w3++;
                     Event e = new Event("ARW3", clock, component);
                     futureEvent.add(e);
 
                     //c3 or c2 random
-                    Component component1 = new Component("c2", false);
+                    Component component1 = new Component("c2",false,clock);
                     Event e1 = new Event("AR2", clock, component1);
                     futureEvent.add(e1);
                 }
@@ -265,9 +469,13 @@ public class main {
         Double eventTime = imminentEvent.getEventTime();
         clock = eventTime;
 
+        double remove = (double) ran.remove(0);
+
+        double serviceTime = (-1/0.217)*Math.log(1-remove);
+//            System.out.println(serviceTime);
 
         Component c = imminentEvent.getComponent();
-        Event e = new Event("LEW1", clock+Workstation_s_time,c);
+        Event e = new Event("LEW1", clock+serviceTime,c);
         futureEvent.add(e);
     }
 
@@ -275,8 +483,12 @@ public class main {
         Double eventTime = imminentEvent.getEventTime();
         clock = eventTime;
 
+        double remove = (double) ran.remove(0);
+
+        double serviceTime = (-1/0.09)*Math.log(1-remove);
+
         Component c = imminentEvent.getComponent();
-        Event e = new Event("LEW2", clock+Workstation_s_time,c);
+        Event e = new Event("LEW2", clock+serviceTime,c);
         futureEvent.add(e);
     }
 
@@ -284,8 +496,12 @@ public class main {
         Double eventTime = imminentEvent.getEventTime();
         clock = eventTime;
 
+        double remove = (double) ran.remove(0);
+
+        double serviceTime = (-1/0.115)*Math.log(1-remove);
+
         Component c = imminentEvent.getComponent();
-        Event e = new Event("LEW3", clock+Workstation_s_time,c);
+        Event e = new Event("LEW3", clock+serviceTime,c);
         futureEvent.add(e);
     }
 
@@ -294,11 +510,20 @@ public class main {
         Double eventTime = imminentEvent.getEventTime();
         clock = eventTime;
         if (buff_c1w1.size() > 0){
+            w1 = false;
+//            System.out.println("w1"+ w1);
             Component remove = buff_c1w1.remove(0);
             p1++;
-        }else{
+
             Component c = imminentEvent.getComponent();
-            Event e = new Event("LEW1", clock+5,c);
+            double startTime = c.getTime();
+            totalDelay = totalDelay + eventTime - startTime;
+
+        }else{
+            w1 = true;
+//            System.out.println("w1: "+ w1);
+            Component c = imminentEvent.getComponent();
+            Event e = new Event("LEW1", clock+3,c);
             futureEvent.add(e);
         }
 
@@ -310,12 +535,22 @@ public class main {
         clock = eventTime;
 
         if (buff_c2w2.size() > 0 && buff_c1w2.size() > 0){
+            w2 = false;
+//            System.out.println("w2"+ w2);
+
             Component remove = buff_c2w2.remove(0);
             Component remove1 = buff_c1w2.remove(0);
             p2++;
+
+            double stime = remove.getTime();
+            double stime1 = remove1.getTime();
+            totalDelay = totalDelay + (eventTime - stime) + (eventTime - stime1);
+
         }else{
+            w2 = true;
+
             Component c = imminentEvent.getComponent();
-            Event e = new Event("LEW2", clock+5,c);
+            Event e = new Event("LEW2", clock+3,c);
             futureEvent.add(e);
         }
 
@@ -328,12 +563,20 @@ public class main {
         clock = eventTime;
 
         if (buff_c1w3.size() > 0 && buff_c3w3.size() > 0){
+            w3 = false;
+//            System.out.println("w3" + w3);
             Component remove = buff_c1w3.remove(0);
             Component remove1 = buff_c3w3.remove(0);
             p3++;
+
+            double stime = remove.getTime();
+            double stime1 = remove1.getTime();
+            totalDelay = totalDelay + (eventTime - stime) + (eventTime - stime1);
         }else{
+            w3 = true;
+
             Component c = imminentEvent.getComponent();
-            Event e = new Event("LEW3", clock+5,c);
+            Event e = new Event("LEW3", clock+3,c);
             futureEvent.add(e);
         }
 
@@ -343,7 +586,7 @@ public class main {
 
 
     private static void initialization(){
-        clock = 0;
+        clock = 0.0;
         Inspector1 = false;
         Inspector2 = false;
         w1 = false;
@@ -353,31 +596,42 @@ public class main {
         p1 = 0;
         p2 = 0;
         p3 = 0;
-//        Component c1 = new Component("c1",false);
-//        Component c2 = new Component("c2",false);
-//        Component c3 = new Component("c3",false);
-//
-//        buff_c1w1.add(c1);
-//        buff_c1w2.add(c1);
-//        buff_c1w3.add(c1);
-//        buff_c3w3.add(c3);
-//        buff_c2w2.add(c2);
 
-        double x = 1;
-        double a = 1103515245;
-        double c = 12345;
-        //m = 2^31
-        double m = (double) Math.pow(2, 31);
+        arrivalc1w1 = 0;
+        arrivalc1w2 = 0;
+        arrivalc1w3 = 0;
+        arrivalc2w2 = 0;
+        arrivalc3w3 = 0;
 
-        InputGeneratorV2 rng = new InputGeneratorV2(x, a, c, m);
-        double[] doubles = rng.generateRandomNumbers();
+        allNumberComp = 0;
 
+        totalDelay = 0;
 
-        Component c11 = new Component("c1",false);
+        inspector1_blocked_time = 0;
+        inspector1_blocked_time_e = 0;
+        inspector1_blocked_time_s = 0;
+
+        inspector2_blocked_time = 0;
+        inspector2_blocked_time_e = 0;
+        inspector2_blocked_time_s = 0;
+
+        workstation1_idle_time = 0;
+        workstation1_idle_time_s = 0;
+        workstation1_idle_time_e = 0;
+
+        workstation2_idle_time = 0;
+        workstation2_idle_time_s = 0;
+        workstation2_idle_time_e = 0;
+
+        workstation3_idle_time = 0;
+        workstation3_idle_time_s = 0;
+        workstation3_idle_time_e = 0;
+
+        Component c11 = new Component("c1",false,clock);
         Event evt = new Event("AR1",clock,c11);
         futureEvent.add(evt);
 
-        Component c22 = new Component("c2",false);
+        Component c22 = new Component("c2",false,clock);
         Event evt1 = new Event("AR2",clock,c22);
         futureEvent.add(evt1);
     }
