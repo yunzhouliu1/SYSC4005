@@ -69,7 +69,9 @@ public class main {
         initialization();
         double allstep = 0;
         double x = 1;
-        double a = 1103515245;
+        double minRandom = 10000;
+        double maxRandom = 1500000000;
+        double a = (double)Math.floor(Math.random() * (maxRandom - minRandom + 1) + minRandom);  //1103515245;
         double c = 12345;
         //m = 2^31
         double m = (double) Math.pow(2, 31);
@@ -245,9 +247,9 @@ public class main {
 
 
 //        System.out.println("prodect");
-        System.out.println("prodect p1: " + p1);
-        System.out.println("prodect p2: " + p2);
-        System.out.println("prodect p3: " + p3);
+        System.out.println("product p1: " + p1);
+        System.out.println("product p2: " + p2);
+        System.out.println("product p3: " + p3);
         double a1 = p1;
         double a2 = p2;
         double a3 = p3;
