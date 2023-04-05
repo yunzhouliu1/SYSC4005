@@ -4,23 +4,13 @@ public class Component {
     private String type;
     private Boolean check;
     private double time;
+    private double WStime;
 
-    public Component(String type, Boolean check, double time) {
+    public Component(String type, Boolean check, double time, double WStime) {
         this.type = type;
         this.check = check;
         this.time = time;
-    }
-
-    public Component() {
-    }
-
-    @Override
-    public String toString() {
-        return "Component{" +
-                "type='" + type + '\'' +
-                ", check=" + check +
-                ", time=" + time +
-                '}';
+        this.WStime = WStime;
     }
 
     public String getType() {
@@ -45,5 +35,13 @@ public class Component {
 
     public void setTime(double time) {
         this.time = time;
+    }
+
+    public double getWStime() {
+        return WStime;
+    }
+
+    public void setWStime(double WStime) {
+        this.WStime = WStime;
     }
 }

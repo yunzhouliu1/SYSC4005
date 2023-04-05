@@ -12,7 +12,7 @@ public class test {
     public static void main(String[] args) {
         futureEvent = new ArrayList<>();
 
-        Component component1 = new Component("c2", false,1);
+        Component component1 = new Component("c2", false,1,0);
         Event e1 = new Event("AR2", 1.0, component1);
         futureEvent.add(e1);
 
