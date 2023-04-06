@@ -311,6 +311,8 @@ public class main {
         System.out.println("Mean number of components in workstation system is: "+ ws2Delay/600);
         System.out.println("Mean number of components in workstation system is: "+ ws2Delay/600);
 
+        System.out.println("Average latency per component in second: "+ totalDelay/allNumberComp);
+
     }
 
     private static void ProcessSimEvent(Event imminentEvent){
