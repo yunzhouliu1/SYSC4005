@@ -727,6 +727,21 @@ public class main {
 
         if (buff_c1w1_size == buff_c1w2_size && buff_c1w1_size == buff_c1w3_size && buff_c1w1_size < 2) {
             return 1;
+
+//            The following code is the component allocation method for the new simulation system
+
+//            java.util.Random random=new java.util.Random();
+//            int result = random.nextInt(3);
+//            System.out.println(result);
+//            if (result == 1){
+//                return 2;
+//            }
+//            if (result == 0){
+//                return 1;
+//            }
+//            if (result == 2){
+//                return 3;
+//            }
         }else if (buff_c1w2_size < buff_c1w3_size && buff_c1w2_size == buff_c1w1_size && buff_c1w1_size < 2){
             return 1;
         }else if (buff_c1w2_size == buff_c1w3_size && buff_c1w2_size < 2) {
